@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: PRODUCTSERVICE
+          uri: lb://PRODUCTSERVICE  # Must match Eureka registration name exactly
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 1
+        - id: ORDERSERVICE
+          uri: lb://ORDERSERVICE    # Must match Eureka registration name exactly
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 1
+    loadbalancer:
+      enabled: true  # Explicitly enable load balancer
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    registry-fetch-interval-seconds: 5
